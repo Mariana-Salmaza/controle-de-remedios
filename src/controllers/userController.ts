@@ -3,29 +3,44 @@ import UserModel from "../models/UserModel";
 
 // método que busca todos
 export const getAll = async (req: Request, res: Response) => {
-  const users = await UserModel.findAll();
-  res.send(users);
+  try {
+    const users = await UserModel.findAll();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Algo deu errado!" });
+  }
 };
 
+// método que busca um único usuário por ID
 export const getUserById = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
-  const user = await UserModel.findByPk(req.params.id);
+  try {
+    const user = await UserModel.findByPk(req.params.id);
 
-  return res.json(user);
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    return res.json(user);
+  } catch (error) {
+    return res.status(500).json({ error: "Algo deu errado!" });
+  }
 };
 
 //método que cria um novo usuário
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { name } = req.body;
+    const { name, email, document, password } = req.body;
 
-    if (!name || name === "") {
-      return res.status(400).json({ error: "Nome é obrigatório" });
+    if (!name || !email || !document || !password) {
+      return res
+        .status(400)
+        .json({ error: "Nome, e-mail, documento e senha são obrigatórios" });
     }
 
-    const user = await UserModel.create({ name });
+    const user = await UserModel.create({ name, email, document, password });
     res.status(201).json(user);
   } catch (error) {
     res.status(500).json("Erro interno no servido" + error);
@@ -38,21 +53,46 @@ export const updateUser = async (
   res: Response
 ) => {
   try {
-    const { name } = req.body;
-    if (!name || name === "") {
-      return res.status(400).json({ error: "Nome é obrigatório" });
+    const { name, email, document, password } = req.body;
+    if (!name || !email || !document || !password) {
+      return res
+        .status(400)
+        .json({ error: "Nome, e-mail, documento e senha são obrigatórios." });
     }
 
     const user = await UserModel.findByPk(req.params.id);
     if (!user) {
-      return res.status(404).json({ error: "Usuário não encontrado" });
+      return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
     user.name = name;
+    user.email = email;
+    user.document = document;
+    user.password = password;
 
     await user.save();
-    res.status(200).json(user);
+
+    res.json(user);
   } catch (error) {
-    res.status(500).json("Erro interno no servidor " + error);
+    res.status(500).json({ error: "Algo deu errado no servidor!" });
+  }
+};
+
+// método que exclui o usuário
+export const deleteUser = async (
+  req: Request<{ id: string }>,
+  res: Response
+) => {
+  try {
+    const user = await UserModel.findByPk(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    await user.destroy();
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: "Algo deu errado!" });
   }
 };
