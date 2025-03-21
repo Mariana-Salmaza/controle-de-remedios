@@ -91,7 +91,7 @@ export const deleteUser = async (
     }
 
     await user.destroy();
-    res.status(204).send();
+    res.status(204).send({ message: "Usuário excluído com sucesso" });
   } catch (error) {
     res.status(500).json({ error: "Algo deu errado!" });
   }
