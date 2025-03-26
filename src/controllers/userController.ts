@@ -53,11 +53,11 @@ export const updateUser = async (
   res: Response
 ) => {
   try {
-    const { name, email, document, password } = req.body;
-    if (!name || !email || !document || !password) {
+    const { name, document, password } = req.body;
+    if (!name || !document || !password) {
       return res
         .status(400)
-        .json({ error: "Nome, e-mail, documento e senha são obrigatórios." });
+        .json({ error: "Nome, documento e senha são obrigatórios." });
     }
 
     const user = await UserModel.findByPk(req.params.id);
@@ -66,13 +66,12 @@ export const updateUser = async (
     }
 
     user.name = name;
-    user.email = email;
     user.document = document;
     user.password = password;
 
     await user.save();
 
-    res.json(user);
+    res.json({ message: "Usuário atualizado com sucesso!", user });
   } catch (error) {
     res.status(500).json({ error: "Algo deu errado no servidor!" });
   }

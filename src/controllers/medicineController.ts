@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
 import Medicine from "../models/medicineModel";
+import UserModel from "../models/UserModel";
 
 // Cria um novo medicamento
 export const createMedicine = async (req: Request, res: Response) => {
   try {
-    const { name, dosage, quantity, schedules } = req.body;
+    const { name, dosage, quantity, schedules, userId, categoryId } = req.body;
 
-    if (!name || !dosage || quantity === undefined || !schedules) {
+    if (!name || !dosage || quantity === undefined || !schedules || !userId) {
       return res.status(400).json({
-        error: "Nome, dosagem, quantidade e horários são obrigatórios",
+        error: "Nome, dosagem, quantidade, horários e userId são obrigatórios",
       });
     }
 
@@ -18,15 +19,24 @@ export const createMedicine = async (req: Request, res: Response) => {
       });
     }
 
+    // Verificando se o usuário existe
+    const userExists = await UserModel.findByPk(userId);
+    if (!userExists) {
+      return res.status(400).json({
+        error: "Usuário não encontrado",
+      });
+    }
+
     const medicine = await Medicine.create({
       name,
       dosage,
       quantity,
       schedules,
+      userId,
+      categoryId,
     });
     res.status(201).json(medicine);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Algo deu errado ao criar o medicamento" });
   }
 };
@@ -58,6 +68,33 @@ export const getMedicineById = async (
     res.json(medicine);
   } catch {
     res.status(500).json({ error: "Algo deu errado ao buscar o medicamento" });
+  }
+};
+
+// Busca todos os medicamentos de um usuário
+export const getMedicinesByUserId = async (
+  req: Request<{ userId: string }>,
+  res: Response
+) => {
+  try {
+    const { userId } = req.params;
+
+    // Verifica se o usuário existe
+    const user = await UserModel.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    // Busca medicamentos associados ao usuário
+    const medicines = await Medicine.findAll({
+      where: { userId },
+    });
+
+    res.json(medicines);
+  } catch (error) {
+    res.status(500).json({
+      error: "Algo deu errado ao buscar os medicamentos do usuário",
+    });
   }
 };
 

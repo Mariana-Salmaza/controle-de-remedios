@@ -2,6 +2,7 @@ import express from "express";
 import sequelize from "./config/database";
 import userRoutes from "./routes/userRoutes";
 import medicineRoutes from "./routes/medicineRoutes";
+import categoryRoutes from "./routes/categoryRoutes";
 
 const app = express();
 const port = 3001;
@@ -13,6 +14,7 @@ app.get("/", (req, res) => {
 app.use(express.json());
 app.use(userRoutes);
 app.use(medicineRoutes);
+app.use(categoryRoutes);
 
 // sync database
 sequelize
