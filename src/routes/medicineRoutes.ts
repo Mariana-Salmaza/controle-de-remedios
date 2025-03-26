@@ -7,14 +7,15 @@ import {
   deleteMedicine,
   getMedicinesByUserId,
 } from "../controllers/medicineController";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
-router.post("/medicines", createMedicine);
-router.get("/medicines", getAllMedicines);
-router.get("/medicines/:id", getMedicineById);
-router.get("/medicines/user/:userId", getMedicinesByUserId);
-router.put("/medicines/:id", updateMedicine);
-router.delete("/medicines/:id", deleteMedicine);
+router.post("/medicines", authMiddleware, createMedicine);
+router.get("/medicines", authMiddleware, getAllMedicines);
+router.get("/medicines/:id", authMiddleware, getMedicineById);
+router.get("/medicines/user/:userId", authMiddleware, getMedicinesByUserId);
+router.put("/medicines/:id", authMiddleware, updateMedicine);
+router.delete("/medicines/:id", authMiddleware, deleteMedicine);
 
 export default router;
