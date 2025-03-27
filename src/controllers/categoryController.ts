@@ -22,8 +22,21 @@ export const createCategory = async (req: Request, res: Response) => {
 // Busca todas as categorias
 export const getAllCategories = async (req: Request, res: Response) => {
   try {
-    const categories = await CategoryModel.findAll();
-    res.json(categories);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = (page - 1) * limit;
+
+    const categories = await CategoryModel.findAndCountAll({
+      limit,
+      offset,
+    });
+
+    res.json({
+      total: categories.count,
+      pages: Math.ceil(categories.count / limit),
+      currentPage: page,
+      categories: categories.rows,
+    });
   } catch {
     res.status(500).json({ error: "Algo deu errado ao buscar as categorias" });
   }

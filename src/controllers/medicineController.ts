@@ -44,8 +44,21 @@ export const createMedicine = async (req: Request, res: Response) => {
 // Busca todos os medicamentos
 export const getAllMedicines = async (req: Request, res: Response) => {
   try {
-    const medicines = await Medicine.findAll();
-    res.json(medicines);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = (page - 1) * limit;
+
+    const medicines = await Medicine.findAndCountAll({
+      limit,
+      offset,
+    });
+
+    res.json({
+      total: medicines.count,
+      pages: Math.ceil(medicines.count / limit),
+      currentPage: page,
+      medicines: medicines.rows,
+    });
   } catch {
     res
       .status(500)

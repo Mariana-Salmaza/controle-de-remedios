@@ -9,8 +9,21 @@ import {
 // método que busca todos
 export const getAll = async (req: Request, res: Response) => {
   try {
-    const users = await UserModel.findAll();
-    res.json(users);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = (page - 1) * limit;
+
+    const users = await UserModel.findAndCountAll({
+      limit,
+      offset,
+    });
+
+    res.json({
+      total: users.count,
+      pages: Math.ceil(users.count / limit),
+      currentPage: page,
+      users: users.rows,
+    });
   } catch (error) {
     res.status(500).json({ error: "Algo deu errado!" });
   }
