@@ -1,20 +1,10 @@
 import { Request, Response } from "express";
 import UserModel from "../models/UserModel";
-
-// Funções auxiliares
-const validateEmail = (email: string): boolean => {
-  const regex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
-  return regex.test(email);
-};
-
-const validateCPF = (cpf: string): boolean => {
-  const cleanCPF = cpf.replace(/[.-]/g, "");
-  return /^\d{11}$/.test(cleanCPF);
-};
-
-const validatePasswordStrength = (password: string): boolean => {
-  return password.length >= 6; // Pode adaptar para exigir números, maiúsculas, etc.
-};
+import {
+  validateEmail,
+  validateCPF,
+  validatePasswordStrength,
+} from "../validators/userValidator";
 
 // método que busca todos
 export const getAll = async (req: Request, res: Response) => {
@@ -69,6 +59,12 @@ export const createUser = async (req: Request, res: Response) => {
         .json({ error: "A senha deve ter no mínimo 6 caracteres" });
     }
 
+    // Verifica se o e-mail já está cadastrado
+    const emailExists = await UserModel.findOne({ where: { email } });
+    if (emailExists) {
+      return res.status(400).json({ error: "E-mail já está em uso" });
+    }
+
     const user = await UserModel.create({ name, email, document, password });
     res.status(201).json(user);
   } catch (error) {
@@ -76,29 +72,32 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-// método que atualiza um usuário
+// método que atualiza usuário
 export const updateUser = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
   try {
-    const { name, document, password } = req.body;
-    const userIdFromToken = (req as any).user?.id;
+    const { name, document, password, email } = req.body;
+    const userIdFromToken = (req as any).user?.user?.id;
 
+    // Verifica se todos os campos obrigatórios estão presentes
     if (!name || !document || !password) {
-      return res
-        .status(400)
-        .json({ error: "Nome, documento e senha são obrigatórios." });
+      return res.status(400).json({
+        error: "Nome, documento e senha são obrigatórios.",
+      });
     }
 
+    // Valida o CPF
     if (!validateCPF(document)) {
-      return res.status(400).json({ error: "CPF inválido" });
+      return res.status(400).json({ error: "CPF inválido." });
     }
 
+    // Valida o nível da senha
     if (!validatePasswordStrength(password)) {
-      return res
-        .status(400)
-        .json({ error: "A senha deve ter no mínimo 6 caracteres" });
+      return res.status(400).json({
+        error: "A senha deve ter no mínimo 6 caracteres.",
+      });
     }
 
     const user = await UserModel.findByPk(req.params.id);
@@ -106,12 +105,21 @@ export const updateUser = async (
       return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
+    // Verifica se o usuário logado está tentando editar outro usuário
     if (user.id !== userIdFromToken) {
       return res
         .status(403)
         .json({ error: "Você só pode editar o seu próprio usuário." });
     }
 
+    // Impede a alteração do e-mail
+    if (email && email !== user.email) {
+      return res
+        .status(400)
+        .json({ error: "Não é permitido alterar o e-mail." });
+    }
+
+    // Atualiza os campos permitidos
     user.name = name;
     user.document = document;
     user.password = password;
@@ -120,7 +128,7 @@ export const updateUser = async (
 
     res.json({ message: "Usuário atualizado com sucesso!", user });
   } catch (error) {
-    res.status(500).json({ error: "Algo deu errado no servidor!" });
+    res.status(500).json({ error: "Erro ao atualizar usuário." });
   }
 };
 
