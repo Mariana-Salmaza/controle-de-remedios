@@ -1,33 +1,17 @@
-import express from "express";
+import app from "./app";
 import sequelize from "./config/database";
-import userRoutes from "./routes/userRoutes";
-import medicineRoutes from "./routes/medicineRoutes";
-import categoryRoutes from "./routes/categoryRoutes";
-import loginRoutes from "./routes/loginRoutes";
 
-const app = express();
 const port = 3001;
-
-app.get("/", (req, res) => {
-  res.send("Hello, Word! :) ");
-});
-
-app.use(express.json());
-app.use(userRoutes);
-app.use(medicineRoutes);
-app.use(categoryRoutes);
-app.use(loginRoutes);
 
 // sync database
 sequelize
   .sync({ alter: true })
   .then(() => {
     console.log("Banco de dados sincronizado com sucesso.");
+    app.listen(port, () => {
+      console.log("O servidor está sendo executado na porta", port);
+    });
   })
   .catch((error) => {
     console.log("Erro ao sincronizar o banco de dados:", error);
   });
-
-app.listen(port, () => {
-  console.log("O servidor está sendo executado na porta", port);
-});
