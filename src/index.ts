@@ -22,10 +22,10 @@ app.use(loginRoutes);
 sequelize
   .sync({ alter: true })
   .then(() => {
-    console.log("database foi sincronizado com sucesso");
+    console.log("Banco de dados sincronizado com sucesso.");
   })
   .catch((error) => {
-    console.log("deu zica no bagulho", error);
+    console.log("Erro ao sincronizar o banco de dados:", error);
   });
 
 app.listen(port, () => {
