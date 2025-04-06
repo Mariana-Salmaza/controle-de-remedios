@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import Medicine from "../models/medicineModel";
 import UserModel from "../models/UserModel";
+import CategoryModel from "../models/categoryModel"; // Certifique-se de que o caminho está correto
 
 // Cria um novo medicamento
 export const createMedicine = async (req: Request, res: Response) => {
   try {
-    const { name, dosage, quantity, schedules, userId, categoryId } = req.body;
+    const userId = (req as any).user.id;
+    const { name, dosage, quantity, schedules, categoryId } = req.body;
 
     if (!name || !dosage || quantity === undefined || !schedules || !userId) {
       return res.status(400).json({
@@ -17,6 +19,22 @@ export const createMedicine = async (req: Request, res: Response) => {
       return res.status(400).json({
         error: "A quantidade deve ser um número válido e não negativa",
       });
+    }
+
+    // Verificando se a categoria foi fornecida, se não, definindo como NULL
+    const validCategoryId = categoryId ? parseInt(categoryId) : null;
+    if (validCategoryId && isNaN(validCategoryId)) {
+      return res.status(400).json({ error: "Categoria inválida" });
+    }
+
+    const category = await CategoryModel.findByPk(categoryId);
+    if (!category && categoryId !== null) {
+      return res.status(400).json({ error: "Categoria não encontrada" });
+    }
+
+    // Validação adicional para categoryId
+    if (categoryId && isNaN(Number(categoryId))) {
+      return res.status(400).json({ error: "Categoria inválida" });
     }
 
     // Verificando se o usuário existe
@@ -149,6 +167,34 @@ export const updateMedicine = async (
     res
       .status(500)
       .json({ error: "Algo deu errado ao atualizar o medicamento" });
+  }
+};
+
+// Busca os medicamentos de uma categoria específica
+export const getMedicinesByCategory = async (req: Request, res: Response) => {
+  try {
+    const { categoryId } = req.params; // Obtém o ID da categoria da URL
+
+    // Busca medicamentos associados à categoria
+    const medicines = await Medicine.findAll({
+      where: { categoryId },
+      include: [
+        {
+          model: CategoryModel,
+          as: "category",
+        },
+      ],
+    });
+
+    if (medicines.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "Nenhum medicamento encontrado para esta categoria" });
+    }
+
+    res.json({ medicines });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar medicamentos da categoria" });
   }
 };
 

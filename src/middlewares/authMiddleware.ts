@@ -16,7 +16,12 @@ export const authMiddleware = (
 
   try {
     const decoded = verifyToken(token);
-    (req as any).user = decoded; // Anexa o usuário decodificado na requisição
+    if (decoded && decoded.user && decoded.user.id) {
+      (req as any).user = decoded.user;
+    } else {
+      return res.status(401).json({ error: "Token inválido." });
+    }
+
     next();
   } catch (error) {
     res.status(401).json({ error: "Token inválido." });

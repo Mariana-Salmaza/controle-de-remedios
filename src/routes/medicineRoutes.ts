@@ -6,6 +6,7 @@ import {
   updateMedicine,
   deleteMedicine,
   getMedicinesByUserId,
+  getMedicinesByCategory,
 } from "../controllers/medicineController";
 import { authMiddleware } from "../middlewares/authMiddleware";
 
@@ -15,6 +16,11 @@ router.post("/medicines", authMiddleware, createMedicine);
 router.get("/medicines", authMiddleware, getAllMedicines);
 router.get("/medicines/:id", authMiddleware, getMedicineById);
 router.get("/medicines/user/:userId", authMiddleware, getMedicinesByUserId);
+router.get(
+  "/medicines/category/:categoryId",
+  authMiddleware,
+  getMedicinesByCategory
+);
 router.put("/medicines/:id", authMiddleware, updateMedicine);
 router.delete("/medicines/:id", authMiddleware, deleteMedicine);
 
