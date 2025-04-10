@@ -16,14 +16,15 @@ export const authMiddleware = (
 
   try {
     const decoded = verifyToken(token);
-    if (decoded && decoded.user && decoded.user.id) {
+
+    // Armazena os dados do usuário direto no req.user
+    if (decoded?.user?.id) {
       (req as any).user = decoded.user;
-    } else {
-      return res.status(401).json({ error: "Token inválido." });
+      return next();
     }
 
-    next();
+    return res.status(401).json({ error: "Token inválido." });
   } catch (error) {
-    res.status(401).json({ error: "Token inválido." });
+    return res.status(401).json({ error: "Token inválido." });
   }
 };

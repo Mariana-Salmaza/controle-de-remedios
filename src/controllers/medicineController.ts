@@ -62,11 +62,13 @@ export const createMedicine = async (req: Request, res: Response) => {
 // Busca todos os medicamentos
 export const getAllMedicines = async (req: Request, res: Response) => {
   try {
+    const userId = (req as any).user?.id;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const offset = (page - 1) * limit;
 
     const medicines = await Medicine.findAndCountAll({
+      where: { userId },
       limit,
       offset,
     });
@@ -135,10 +137,16 @@ export const updateMedicine = async (
   res: Response
 ) => {
   try {
+    const userId = (req as any).user?.id;
     const medicine = await Medicine.findByPk(req.params.id);
 
     if (!medicine) {
       return res.status(404).json({ error: "Medicamento não encontrado" });
+    }
+
+    // Garante que o medicamento pertence ao usuário logado
+    if (medicine.userId !== userId) {
+      return res.status(403).json({ error: "Acesso negado." });
     }
 
     const { name, dosage, quantity, schedules } = req.body;
@@ -204,14 +212,19 @@ export const deleteMedicine = async (
   res: Response
 ) => {
   try {
+    const userId = (req as any).user?.id;
     const medicine = await Medicine.findByPk(req.params.id);
 
     if (!medicine) {
       return res.status(404).json({ error: "Medicamento não encontrado" });
     }
 
-    await medicine.destroy();
+    // Garante que o medicamento pertence ao usuário logado
+    if (medicine.userId !== userId) {
+      return res.status(403).json({ error: "Acesso negado." });
+    }
 
+    await medicine.destroy();
     res.json({ message: "Medicamento excluído com sucesso" });
   } catch {
     res.status(500).json({ error: "Algo deu errado ao excluir o medicamento" });

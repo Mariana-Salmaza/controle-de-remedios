@@ -1,17 +1,20 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
+import UserModel from "./UserModel";
 
 interface CategoryAttributes {
-  id: number | undefined;
-  name: string | undefined;
+  id?: number;
+  name: string;
+  userId: number;
 }
 
 class CategoryModel
   extends Model<CategoryAttributes>
   implements CategoryAttributes
 {
-  public id: number | undefined;
-  public name: string | undefined;
+  public id!: number;
+  public name!: string;
+  public userId!: number;
 }
 
 CategoryModel.init(
@@ -25,6 +28,14 @@ CategoryModel.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "users",
+        key: "id",
+      },
+    },
   },
   {
     sequelize,
@@ -32,5 +43,11 @@ CategoryModel.init(
     tableName: "categories",
   }
 );
+
+// Associação opcional com usuário
+CategoryModel.belongsTo(UserModel, {
+  foreignKey: "userId",
+  as: "user",
+});
 
 export default CategoryModel;

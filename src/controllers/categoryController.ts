@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import CategoryModel from "../models/categoryModel";
+import UserModel from "../models/UserModel";
 
 // Cria uma nova categoria
 export const createCategory = async (req: Request, res: Response) => {
   try {
     const { name } = req.body;
+    const userId = (req as any).user?.id;
 
     if (!name) {
       return res
@@ -12,7 +14,7 @@ export const createCategory = async (req: Request, res: Response) => {
         .json({ error: "O nome da categoria é obrigatório" });
     }
 
-    const category = await CategoryModel.create({ name });
+    const category = await CategoryModel.create({ name, userId });
     res.status(201).json(category);
   } catch (error) {
     res.status(500).json({ error: "Algo deu errado ao criar a categoria" });
@@ -22,11 +24,13 @@ export const createCategory = async (req: Request, res: Response) => {
 // Busca todas as categorias
 export const getAllCategories = async (req: Request, res: Response) => {
   try {
+    const userId = (req as any).user?.id;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const offset = (page - 1) * limit;
 
     const categories = await CategoryModel.findAndCountAll({
+      where: { userId },
       limit,
       offset,
     });
@@ -67,11 +71,16 @@ export const updateCategory = async (
 ) => {
   try {
     const { name } = req.body;
+    const userId = (req as any).user?.id;
 
     const category = await CategoryModel.findByPk(req.params.id);
 
     if (!category) {
       return res.status(404).json({ error: "Categoria não encontrada" });
+    }
+
+    if (category.userId !== userId) {
+      return res.status(403).json({ error: "Acesso negado." });
     }
 
     category.name = name;
@@ -89,14 +98,18 @@ export const deleteCategory = async (
   res: Response
 ) => {
   try {
+    const userId = (req as any).user?.id;
     const category = await CategoryModel.findByPk(req.params.id);
 
     if (!category) {
       return res.status(404).json({ error: "Categoria não encontrada" });
     }
 
-    await category.destroy();
+    if (category.userId !== userId) {
+      return res.status(403).json({ error: "Acesso negado." });
+    }
 
+    await category.destroy();
     res.json({ message: "Categoria excluída com sucesso" });
   } catch {
     res.status(500).json({ error: "Algo deu errado ao excluir a categoria" });

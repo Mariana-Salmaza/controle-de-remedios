@@ -29,19 +29,18 @@ export const getAll = async (req: Request, res: Response) => {
   }
 };
 
-// método que busca um único usuário por ID
 export const getUserById = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
   try {
-    const user = await UserModel.findByPk(req.params.id);
+    const user = await UserModel.findByPk(req.params.id); // Busca o usuário pelo ID
 
     if (!user) {
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
-    return res.json(user);
+    return res.json(user); // Retorna os dados do usuário
   } catch (error) {
     return res.status(500).json({ error: "Algo deu errado!" });
   }
@@ -92,13 +91,12 @@ export const updateUser = async (
 ) => {
   try {
     const { name, document, password, email } = req.body;
-    const userIdFromToken = (req as any).user?.user?.id;
+    const userIdFromToken = (req as any).user?.id; // Obtém o ID do usuário logado do token
 
-    // Verifica se todos os campos obrigatórios estão presentes
     if (!name || !document || !password) {
-      return res.status(400).json({
-        error: "Nome, documento e senha são obrigatórios.",
-      });
+      return res
+        .status(400)
+        .json({ error: "Nome, documento e senha são obrigatórios." });
     }
 
     // Valida o CPF
@@ -106,11 +104,11 @@ export const updateUser = async (
       return res.status(400).json({ error: "CPF inválido." });
     }
 
-    // Valida o nível da senha
+    // Valida a senha
     if (!validatePasswordStrength(password)) {
-      return res.status(400).json({
-        error: "A senha deve ter no mínimo 6 caracteres.",
-      });
+      return res
+        .status(400)
+        .json({ error: "A senha deve ter no mínimo 6 caracteres." });
     }
 
     const user = await UserModel.findByPk(req.params.id);
@@ -118,14 +116,14 @@ export const updateUser = async (
       return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
-    // Verifica se o usuário logado está tentando editar outro usuário
+    // Verifica se o usuário logado é o mesmo que está tentando atualizar
     if (user.id !== userIdFromToken) {
       return res
         .status(403)
-        .json({ error: "Você só pode editar o seu próprio usuário." });
+        .json({ error: "Você só pode atualizar suas próprias informações." });
     }
 
-    // Impede a alteração do e-mail
+    // Impede alteração do email
     if (email && email !== user.email) {
       return res
         .status(400)
@@ -151,15 +149,24 @@ export const deleteUser = async (
   res: Response
 ) => {
   try {
+    const userIdFromToken = (req as any).user?.id;
+
     const user = await UserModel.findByPk(req.params.id);
 
     if (!user) {
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
+    // Só permite exclusão do próprio usuário
+    if (user.id !== userIdFromToken) {
+      return res
+        .status(403)
+        .json({ error: "Você só pode excluir a sua própria conta." });
+    }
+
     await user.destroy();
-    res.status(204).send({ message: "Usuário excluído com sucesso" });
+    return res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: "Algo deu errado!" });
+    return res.status(500).json({ error: "Algo deu errado!" });
   }
 };
