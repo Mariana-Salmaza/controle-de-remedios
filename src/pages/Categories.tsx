@@ -38,9 +38,32 @@ const Categories = () => {
     fetchCategories(); // Chama a função ao montar o componente
   }, []);
 
-  const handleCategoryClick = (categoryId: number) => {
-    // Redireciona para a página de medicamentos dessa categoria
-    navigate(`/medicines/category/${categoryId}`);
+  // Função para excluir categoria
+  const handleDeleteCategory = async (categoryId: number) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Você precisa estar logado.");
+        return;
+      }
+
+      const response = await api.delete(`/categories/${categoryId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        // Atualiza a lista de categorias após a exclusão
+        setCategories(
+          categories.filter((category) => category.id !== categoryId)
+        );
+        alert("Categoria excluída com sucesso!");
+      }
+    } catch (error) {
+      console.error("Erro ao excluir categoria:", error);
+      alert("Erro ao excluir categoria.");
+    }
   };
 
   return (
@@ -68,7 +91,7 @@ const Categories = () => {
                 <Button
                   variant="outlined"
                   sx={{ marginTop: 2 }}
-                  onClick={() => handleCategoryClick(category.id)}
+                  onClick={() => navigate(`/medicines/category/${category.id}`)}
                 >
                   Ver Medicamentos
                 </Button>
@@ -78,6 +101,15 @@ const Categories = () => {
                   onClick={() => navigate(`/edit-category/${category.id}`)} // Redireciona para editar categoria
                 >
                   Editar
+                </Button>
+                {/* Botão de Excluir Categoria */}
+                <Button
+                  variant="outlined"
+                  color="error"
+                  sx={{ marginTop: 2, marginLeft: 1 }}
+                  onClick={() => handleDeleteCategory(category.id)} // Função de exclusão
+                >
+                  Excluir
                 </Button>
               </Paper>
             </Grid>

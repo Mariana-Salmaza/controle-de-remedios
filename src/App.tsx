@@ -11,6 +11,7 @@ import PrivateLayout from "./components/PrivateLayout";
 import AddMedicine from "./pages/AddMedicine"; // Importe a página de adicionar medicamento
 import AddCategory from "./pages/AddCategory";
 import MedicinesByCategory from "./pages/MedicinesByCategory";
+import EditUser from "./pages/EditUser";
 
 const App = () => {
   return (
@@ -54,6 +55,10 @@ const App = () => {
           <Route
             path="/medicines/category/:categoryId"
             element={<MedicinesByCategory />}
+          />
+          <Route
+            path="/edit-user"
+            element={<ProtectedRoute component={EditUser} />}
           />
         </Route>
       </Routes>
