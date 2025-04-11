@@ -3,6 +3,7 @@ import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import { jwtDecode } from "jwt-decode";
+import { AxiosError } from "axios";
 
 interface DecodedToken {
   user: {
@@ -37,8 +38,11 @@ const EditUser = () => {
         // Preenche os campos necessários (sem incluir o email)
         const { name, document } = response.data;
         setUser({ name, document, password: "" });
-      } catch (error) {
-        alert("Erro ao carregar dados do usuário");
+      } catch (err) {
+        const error = err as AxiosError<{ error: string }>;
+        alert(
+          error.response?.data?.error || "Erro ao carregar dados do usuário"
+        );
         navigate("/login");
       }
     };
@@ -85,8 +89,8 @@ const EditUser = () => {
         alert("Dados atualizados com sucesso!");
         navigate("/dashboard");
       }
-    } catch (error: any) {
-      console.error(error);
+    } catch (err) {
+      const error = err as AxiosError<{ error: string }>;
       const mensagem =
         error.response?.data?.error || "Erro ao atualizar os dados.";
       alert(mensagem);

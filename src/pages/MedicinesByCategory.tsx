@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Box,
   Typography,
@@ -14,13 +14,23 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api"; // Supondo que você tenha configurado o axios com o baseURL
 
+// Definir a interface para o medicamento
+interface Medicine {
+  id: number;
+  name: string;
+  dosage: string;
+  quantity: number;
+  schedules: string;
+  categoryId: number;
+}
+
 const MedicinesByCategory = () => {
   const { categoryId } = useParams(); // Pega o ID da categoria da URL
-  const [medicines, setMedicines] = useState<any[]>([]); // Estado para armazenar os medicamentos da categoria
+  const [medicines, setMedicines] = useState<Medicine[]>([]); // Corrigido para usar o tipo 'Medicine' // Estado para armazenar os medicamentos da categoria
   const navigate = useNavigate();
 
   // Função para buscar os medicamentos da categoria
-  const fetchMedicines = async () => {
+  const fetchMedicines = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -39,11 +49,11 @@ const MedicinesByCategory = () => {
       console.error("Erro ao buscar medicamentos:", error);
       alert("Erro ao buscar medicamentos.");
     }
-  };
+  }, [categoryId]); // 'categoryId' é a dependência
 
   useEffect(() => {
     fetchMedicines(); // Chama a função ao montar o componente
-  }, [categoryId]);
+  }, [fetchMedicines]); // Adiciona 'fetchMedicines' nas dependências
 
   return (
     <Box sx={{ padding: 3 }}>

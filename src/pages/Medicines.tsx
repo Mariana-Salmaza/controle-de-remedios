@@ -13,24 +13,38 @@ import {
 } from "@mui/material";
 import api from "../api";
 import { Link } from "react-router-dom";
+import Pagination from "@mui/material/Pagination";
+
+interface Medicine {
+  id: number;
+  name: string;
+  dosage: string;
+  quantity: number;
+  schedules: string;
+  categoryId: number;
+}
 
 const Medicines = () => {
-  const [medicines, setMedicines] = useState<any[]>([]);
+  const [medicines, setMedicines] = useState<Medicine[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchMedicines = async (currentPage: number) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await api.get(`/medicines?page=${currentPage}&limit=5`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMedicines(response.data.medicines);
+      setTotalPages(response.data.pages);
+    } catch (error) {
+      console.error("Erro ao buscar medicamentos:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchMedicines = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await api.get("/medicines", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setMedicines(response.data.medicines);
-      } catch (error) {
-        console.error("Erro ao buscar medicamentos:", error);
-      }
-    };
-    fetchMedicines();
-  }, []);
+    fetchMedicines(page);
+  }, [page]);
 
   const handleDelete = async (id: number) => {
     try {
@@ -93,6 +107,14 @@ const Medicines = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Box display="flex" justifyContent="center" mt={2}>
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={(_, value) => setPage(value)}
+          color="primary"
+        />
+      </Box>
     </Box>
   );
 };

@@ -12,13 +12,18 @@ import {
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 
+interface Category {
+  id: number;
+  name: string;
+}
+
 const AddMedicine = () => {
   const [name, setName] = useState("");
   const [dosage, setDosage] = useState("");
   const [quantity, setQuantity] = useState("");
   const [schedules, setSchedules] = useState("");
   const [categoryId, setCategoryId] = useState(""); // Para armazenar o ID da categoria
-  const [categories, setCategories] = useState<any[]>([]); // Para armazenar as categorias
+  const [categories, setCategories] = useState<Category[]>([]); // Para armazenar as categorias
   const navigate = useNavigate();
 
   // Função para buscar as categorias

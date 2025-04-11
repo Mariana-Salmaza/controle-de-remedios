@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Button, Grid, Paper } from "@mui/material";
+import { Box, Typography, Button, Paper, Pagination } from "@mui/material";
+import CustomGrid from "../components/CustomGrid";
 import { useNavigate } from "react-router-dom";
 import api from "../api"; // Supondo que você tenha configurado o axios com o baseURL
 
@@ -10,6 +11,8 @@ interface Category {
 
 const Categories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(6);
   const navigate = useNavigate();
 
   // Função para buscar as categorias
@@ -66,6 +69,11 @@ const Categories = () => {
     }
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCategories = categories.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(categories.length / itemsPerPage);
+
   return (
     <Box sx={{ maxWidth: 800, margin: "auto", padding: 3 }}>
       <Typography variant="h4" gutterBottom>
@@ -82,10 +90,10 @@ const Categories = () => {
         + Adicionar Categoria
       </Button>
 
-      <Grid container spacing={3}>
-        {categories.length > 0 ? (
-          categories.map((category) => (
-            <Grid item xs={12} sm={6} md={4} key={category.id}>
+      <CustomGrid container spacing={3}>
+        {currentCategories.length > 0 ? (
+          currentCategories.map((category) => (
+            <CustomGrid item xs={12} sm={6} md={4} key={category.id}>
               <Paper sx={{ padding: 2, textAlign: "center" }}>
                 <Typography variant="h6">{category.name}</Typography>
                 <Button
@@ -112,14 +120,26 @@ const Categories = () => {
                   Excluir
                 </Button>
               </Paper>
-            </Grid>
+            </CustomGrid>
           ))
         ) : (
           <Typography variant="h6" color="text.secondary">
             Nenhuma categoria encontrada.
           </Typography>
         )}
-      </Grid>
+      </CustomGrid>
+
+      {/* Paginação */}
+      {totalPages > 1 && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={(_, value) => setCurrentPage(value)}
+            color="primary"
+          />
+        </Box>
+      )}
     </Box>
   );
 };

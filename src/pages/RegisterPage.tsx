@@ -1,14 +1,20 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import { TextField, Button, Box, Typography, Grid, Paper } from "@mui/material";
+import { TextField, Button, Box, Typography, Paper } from "@mui/material";
+import CustomGrid from "../components/CustomGrid";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 import loginImage from "../assets/login-image.webp.webp";
+import { useState } from "react";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import { AxiosError } from "axios";
 
 interface FormData {
   name: string;
   email: string;
   document: string;
   password: string;
+  confirmPassword: string;
 }
 
 const RegisterPage = () => {
@@ -20,29 +26,52 @@ const RegisterPage = () => {
 
   const navigate = useNavigate();
 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "error"
+  );
+
   const onSubmit: SubmitHandler<FormData> = async (data) => {
+    if (data.password !== data.confirmPassword) {
+      setSnackbarMessage("As senhas não coincidem.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+      return;
+    }
+
     try {
       const response = await api.post("/users", data);
       if (response.status === 201) {
-        alert("Cadastro realizado com sucesso!");
+        setSnackbarMessage("Cadastro realizado com sucesso!");
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
         navigate("/login");
       }
-    } catch {
-      alert("Erro ao cadastrar usuário. Verifique os dados e tente novamente.");
+    } catch (error) {
+      const err = error as AxiosError<{ error: string }>;
+
+      const errorMessage =
+        err.response?.data?.error ||
+        "Erro ao cadastrar usuário. Verifique os dados e tente novamente.";
+
+      setSnackbarMessage(errorMessage);
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
     }
   };
 
   return (
-    <Grid container sx={{ minHeight: "100vh" }}>
-      <Grid item xs={12} md={6}>
+    <CustomGrid container sx={{ minHeight: "100vh" }}>
+      <CustomGrid item xs={12} md={6}>
         <img
           src={loginImage}
           alt="Controle de Remédios"
           style={{ width: "100%", height: "100vh", objectFit: "cover" }}
         />
-      </Grid>
+      </CustomGrid>
 
-      <Grid item xs={12} md={6}>
+      <CustomGrid item xs={12} md={6}>
         <Box
           display="flex"
           flexDirection="column"
@@ -108,6 +137,17 @@ const RegisterPage = () => {
                 error={!!errors.password}
                 helperText={errors.password?.message || ""}
               />
+              <TextField
+                label="Confirmar Senha"
+                type="password"
+                fullWidth
+                margin="normal"
+                {...register("confirmPassword", {
+                  required: "Confirme sua senha",
+                })}
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword?.message || ""}
+              />
               <Button
                 type="submit"
                 variant="contained"
@@ -119,8 +159,22 @@ const RegisterPage = () => {
             </form>
           </Paper>
         </Box>
-      </Grid>
-    </Grid>
+      </CustomGrid>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </CustomGrid>
   );
 };
 

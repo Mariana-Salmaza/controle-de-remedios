@@ -2,11 +2,18 @@ import { useState, useEffect } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import api from "../api";
 import { useNavigate, useParams } from "react-router-dom";
+interface MedicineData {
+  name: string;
+  dosage: string;
+  quantity: string;
+  schedules: string;
+  categoryId: string;
+}
 
 const EditMedicine = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [medicine, setMedicine] = useState<any>({
+  const [medicine, setMedicine] = useState<MedicineData>({
     name: "",
     dosage: "",
     quantity: "",

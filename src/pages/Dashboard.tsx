@@ -11,6 +11,12 @@ interface UserData {
   document: string;
 }
 
+interface DecodedToken {
+  user: {
+    id: number;
+  };
+}
+
 const Dashboard = () => {
   const [user, setUser] = useState<UserData | null>(null);
   const navigate = useNavigate();
@@ -24,7 +30,7 @@ const Dashboard = () => {
           throw new Error("Token não encontrado");
         }
 
-        const decoded = jwtDecode<any>(token); // Decodifica o token
+        const decoded = jwtDecode<DecodedToken>(token); // Decodifica o token
         const userId = decoded?.user?.id;
 
         if (!userId) {
@@ -60,7 +66,7 @@ const Dashboard = () => {
           localStorage.removeItem("token");
           navigate("/login");
         }
-      } catch (error) {
+      } catch {
         alert("Erro ao excluir o usuário");
       }
     }
