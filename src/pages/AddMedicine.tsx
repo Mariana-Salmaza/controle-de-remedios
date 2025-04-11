@@ -8,6 +8,8 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +26,8 @@ const AddMedicine = () => {
   const [schedules, setSchedules] = useState("");
   const [categoryId, setCategoryId] = useState(""); // Para armazenar o ID da categoria
   const [categories, setCategories] = useState<Category[]>([]); // Para armazenar as categorias
+  const [message, setMessage] = useState(""); // Para armazenar a mensagem
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const navigate = useNavigate();
 
   // Função para buscar as categorias
@@ -42,9 +46,9 @@ const AddMedicine = () => {
       });
 
       setCategories(response.data.categories); // Atualizando o estado com as categorias
-    } catch (error) {
-      console.error("Erro ao buscar categorias:", error);
-      alert("Erro ao buscar categorias.");
+    } catch {
+      setMessage("Erro ao buscar categorias");
+      setOpenSnackbar(true); // Exibe a mensagem de erro para o usuário
     }
   };
 
@@ -85,12 +89,19 @@ const AddMedicine = () => {
       );
 
       if (response.status === 201) {
-        navigate("/medicines"); // Redireciona após o sucesso
+        setMessage("Medicamento cadastrado com sucesso!");
+        setOpenSnackbar(true); // Exibe a mensagem de sucesso para o usuário
+        navigate("/medicines");
       }
-    } catch (error) {
-      console.error("Erro ao cadastrar medicamento:", error);
-      alert("Erro ao cadastrar medicamento");
+    } catch {
+      setMessage("Erro ao cadastrar medicamento");
+      setOpenSnackbar(true); // Exibe a mensagem de erro para o usuário
     }
+  };
+
+  // Função para fechar o Snackbar e redirecionar
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   return (
@@ -152,6 +163,20 @@ const AddMedicine = () => {
           Cadastrar
         </Button>
       </form>
+      {/* Snackbar com a mensagem de sucesso ou erro */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={message.includes("sucesso") ? "success" : "error"}
+          sx={{ width: "100%" }}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -1,5 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import { TextField, Button, Box, Typography, Grid, Paper } from "@mui/material";
+import { TextField, Button, Box, Typography, Paper } from "@mui/material";
+import CustomGrid from "../components/CustomGrid"; // ajuste o caminho conforme a pasta
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 import loginImage from "../assets/login-image.webp.webp";
@@ -33,16 +34,16 @@ const Login = () => {
   };
 
   return (
-    <Grid container sx={{ minHeight: "100vh" }}>
-      <Grid item xs={12} md={6}>
+    <CustomGrid container sx={{ minHeight: "100vh" }}>
+      <CustomGrid item xs={12} md={6}>
         <img
           src={loginImage}
           alt="Controle de Remédios"
           style={{ width: "100%", height: "100vh", objectFit: "cover" }}
         />
-      </Grid>
+      </CustomGrid>
 
-      <Grid item xs={12} md={6}>
+      <CustomGrid item xs={12} md={6}>
         <Box
           display="flex"
           flexDirection="column"
@@ -105,8 +106,8 @@ const Login = () => {
             </form>
           </Paper>
         </Box>
-      </Grid>
-    </Grid>
+      </CustomGrid>
+    </CustomGrid>
   );
 };
 
