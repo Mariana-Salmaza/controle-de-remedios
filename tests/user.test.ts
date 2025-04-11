@@ -2,11 +2,11 @@ import request from "supertest";
 import app from "../src/app";
 import sequelize from "../src/config/database";
 
-// Simula autenticação com ID fixo de usuário (ID 1)
+// Mocka autenticação corretamente
 jest.mock("../src/middlewares/authMiddleware", () => {
   return {
     authMiddleware: (req: any, _res: any, next: any) => {
-      req.user = { user: { id: 1 } };
+      req.user = { id: 1 }; // Corrigido!
       next();
     },
   };
@@ -20,7 +20,6 @@ describe("User Endpoints", () => {
     process.env.NODE_ENV = "test";
     await sequelize.sync({ force: true });
 
-    // Cria usuário 1 (logado)
     const user1 = await request(app).post("/users").send({
       name: "Rodrigo Teste",
       email: "rodrigo@example.com",
@@ -29,7 +28,6 @@ describe("User Endpoints", () => {
     });
     user1Id = user1.body.id;
 
-    // Cria usuário 2 (outro usuário)
     const user2 = await request(app).post("/users").send({
       name: "Outro Usuário",
       email: "outro@example.com",
@@ -90,7 +88,7 @@ describe("User Endpoints", () => {
     expect(response.body.error).toMatch(/senha deve ter no mínimo/i);
   });
 
-  test("GET /users - deve retornar todos os usuários (com autenticação mockada)", async () => {
+  test("GET /users - deve retornar todos os usuários", async () => {
     const response = await request(app)
       .get("/users")
       .set({ Authorization: "Bearer fake-token" });
@@ -132,12 +130,12 @@ describe("User Endpoints", () => {
     });
 
     expect(response.status).toBe(403);
-    expect(response.body.error).toMatch(/editar o seu próprio/i);
+    expect(response.body.error).toMatch(/suas próprias informações/i); // Corrigido!
   });
 
   test("DELETE /users/:id - deve excluir usuário com sucesso", async () => {
     const response = await request(app)
-      .delete(`/users/${user2Id}`)
+      .delete(`/users/${user1Id}`)
       .set({ Authorization: "Bearer fake-token" });
 
     expect(response.status).toBe(204);
