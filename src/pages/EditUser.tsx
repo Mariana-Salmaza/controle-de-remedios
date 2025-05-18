@@ -34,8 +34,6 @@ const EditUser = () => {
         const response = await api.get(`/users/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        // Preenche os campos necessários (sem incluir o email)
         const { name, document } = response.data;
         setUser({ name, document, password: "" });
       } catch (err) {

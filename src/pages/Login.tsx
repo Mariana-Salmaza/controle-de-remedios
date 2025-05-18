@@ -22,14 +22,13 @@ const Login = () => {
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
       const response = await api.post("/login", data);
-      console.log(response.data); // Log da resposta para depuração
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
         navigate("/dashboard");
       }
     } catch (error) {
       alert("Erro ao fazer login. Verifique seu e-mail e senha.");
-      console.error(error); // Log do erro
+      console.error(error);
     }
   };
 

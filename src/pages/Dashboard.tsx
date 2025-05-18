@@ -30,7 +30,7 @@ const Dashboard = () => {
           throw new Error("Token não encontrado");
         }
 
-        const decoded = jwtDecode<DecodedToken>(token); // Decodifica o token
+        const decoded = jwtDecode<DecodedToken>(token);
         const userId = decoded?.user?.id;
 
         if (!userId) {
@@ -38,14 +38,14 @@ const Dashboard = () => {
         }
 
         const response = await api.get(`/users/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` }, // Passando o token para o backend
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        setUser(response.data); // Atualiza o estado com os dados do usuário
+        setUser(response.data);
       } catch (error) {
         alert("Erro ao carregar dados do usuário");
-        console.error(error); // Exibe o erro no console para depuração
-        navigate("/login"); // Redireciona para a página de login
+        console.error(error);
+        navigate("/login");
       }
     };
 
@@ -100,7 +100,7 @@ const Dashboard = () => {
           color="error"
           fullWidth
           sx={{ mt: 3 }}
-          onClick={handleDelete} // Chamando a função de exclusão
+          onClick={handleDelete}
         >
           Excluir Conta
         </Button>

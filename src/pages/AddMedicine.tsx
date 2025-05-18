@@ -24,13 +24,12 @@ const AddMedicine = () => {
   const [dosage, setDosage] = useState("");
   const [quantity, setQuantity] = useState("");
   const [schedules, setSchedules] = useState("");
-  const [categoryId, setCategoryId] = useState(""); // Para armazenar o ID da categoria
-  const [categories, setCategories] = useState<Category[]>([]); // Para armazenar as categorias
-  const [message, setMessage] = useState(""); // Para armazenar a mensagem
+  const [categoryId, setCategoryId] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [message, setMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const navigate = useNavigate();
 
-  // Função para buscar as categorias
   const fetchCategories = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -41,25 +40,24 @@ const AddMedicine = () => {
 
       const response = await api.get("/categories", {
         headers: {
-          Authorization: `Bearer ${token}`, // Passando o token no cabeçalho
+          Authorization: `Bearer ${token}`,
         },
       });
 
-      setCategories(response.data.categories); // Atualizando o estado com as categorias
+      setCategories(response.data.categories);
     } catch {
       setMessage("Erro ao buscar categorias");
-      setOpenSnackbar(true); // Exibe a mensagem de erro para o usuário
+      setOpenSnackbar(true);
     }
   };
 
   useEffect(() => {
-    fetchCategories(); // Carrega as categorias assim que o componente é montado
+    fetchCategories();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Verifique se todos os campos obrigatórios estão preenchidos
     if (!name || !dosage || !quantity || !schedules || !categoryId) {
       alert("Por favor, preencha todos os campos obrigatórios.");
       return;
@@ -79,27 +77,26 @@ const AddMedicine = () => {
           dosage,
           quantity,
           schedules,
-          categoryId, // Passando categoryId
+          categoryId,
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Passando o token no cabeçalho
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       if (response.status === 201) {
         setMessage("Medicamento cadastrado com sucesso!");
-        setOpenSnackbar(true); // Exibe a mensagem de sucesso para o usuário
+        setOpenSnackbar(true);
         navigate("/medicines");
       }
     } catch {
       setMessage("Erro ao cadastrar medicamento");
-      setOpenSnackbar(true); // Exibe a mensagem de erro para o usuário
+      setOpenSnackbar(true);
     }
   };
 
-  // Função para fechar o Snackbar e redirecionar
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
@@ -142,8 +139,6 @@ const AddMedicine = () => {
           onChange={(e) => setSchedules(e.target.value)}
           required
         />
-
-        {/* Campo para selecionar categoria */}
         <FormControl fullWidth margin="normal" required>
           <InputLabel>Categoria</InputLabel>
           <Select
@@ -163,7 +158,6 @@ const AddMedicine = () => {
           Cadastrar
         </Button>
       </form>
-      {/* Snackbar com a mensagem de sucesso ou erro */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}

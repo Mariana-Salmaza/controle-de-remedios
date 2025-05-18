@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Box, Typography, Button, Paper, Pagination } from "@mui/material";
 import CustomGrid from "../components/CustomGrid";
 import { useNavigate } from "react-router-dom";
-import api from "../api"; // Supondo que você tenha configurado o axios com o baseURL
+import api from "../api";
 
 interface Category {
   id: number;
@@ -15,7 +15,6 @@ const Categories = () => {
   const [itemsPerPage] = useState(6);
   const navigate = useNavigate();
 
-  // Função para buscar as categorias
   const fetchCategories = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -26,11 +25,11 @@ const Categories = () => {
 
       const response = await api.get("/categories", {
         headers: {
-          Authorization: `Bearer ${token}`, // Passando o token no cabeçalho
+          Authorization: `Bearer ${token}`,
         },
       });
 
-      setCategories(response.data.categories); // Atualizando o estado com as categorias recebidas
+      setCategories(response.data.categories);
     } catch (error) {
       console.error("Erro ao buscar categorias:", error);
       alert("Erro ao buscar categorias.");
@@ -38,10 +37,9 @@ const Categories = () => {
   };
 
   useEffect(() => {
-    fetchCategories(); // Chama a função ao montar o componente
+    fetchCategories();
   }, []);
 
-  // Função para excluir categoria
   const handleDeleteCategory = async (categoryId: number) => {
     try {
       const token = localStorage.getItem("token");
@@ -57,7 +55,6 @@ const Categories = () => {
       });
 
       if (response.status === 200) {
-        // Atualiza a lista de categorias após a exclusão
         setCategories(
           categories.filter((category) => category.id !== categoryId)
         );
@@ -80,11 +77,10 @@ const Categories = () => {
         Categorias de Medicamentos
       </Typography>
 
-      {/* Botão para adicionar nova categoria */}
       <Button
         variant="contained"
         color="primary"
-        onClick={() => navigate("/add-category")} // Redireciona para a página de adicionar categoria
+        onClick={() => navigate("/add-category")}
         sx={{ marginBottom: 3 }}
       >
         + Adicionar Categoria
@@ -106,16 +102,16 @@ const Categories = () => {
                 <Button
                   variant="outlined"
                   sx={{ marginTop: 2, marginLeft: 1 }}
-                  onClick={() => navigate(`/edit-category/${category.id}`)} // Redireciona para editar categoria
+                  onClick={() => navigate(`/edit-category/${category.id}`)}
                 >
                   Editar
                 </Button>
-                {/* Botão de Excluir Categoria */}
+
                 <Button
                   variant="outlined"
                   color="error"
                   sx={{ marginTop: 2, marginLeft: 1 }}
-                  onClick={() => handleDeleteCategory(category.id)} // Função de exclusão
+                  onClick={() => handleDeleteCategory(category.id)}
                 >
                   Excluir
                 </Button>
@@ -129,7 +125,6 @@ const Categories = () => {
         )}
       </CustomGrid>
 
-      {/* Paginação */}
       {totalPages > 1 && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <Pagination

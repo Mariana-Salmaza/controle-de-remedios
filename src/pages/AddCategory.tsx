@@ -4,13 +4,11 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 
 const AddCategory = () => {
-  const [name, setName] = useState(""); // Estado para o nome da categoria
-  const navigate = useNavigate(); // Hook para navegação
+  const [name, setName] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Previne o comportamento padrão do formulário
-
-    // Verifica se o nome da categoria foi preenchido
+    e.preventDefault();
     if (!name) {
       alert("Por favor, preencha o nome da categoria.");
       return;
@@ -22,21 +20,19 @@ const AddCategory = () => {
         alert("Você precisa estar logado.");
         return;
       }
-
-      // Envia a requisição POST para criar uma nova categoria
       const response = await api.post(
         "/categories",
         { name },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Passando o token no cabeçalho
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       if (response.status === 201) {
         alert("Categoria criada com sucesso!");
-        navigate("/categories"); // Redireciona para a lista de categorias após o sucesso
+        navigate("/categories");
       }
     } catch (error) {
       console.error("Erro ao cadastrar categoria:", error);

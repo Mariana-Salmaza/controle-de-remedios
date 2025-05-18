@@ -17,16 +17,10 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Página inicial de login */}
         <Route path="/" element={<Login />} />
-        {/* Página de login */}
         <Route path="/login" element={<Login />} />
-        {/* Página de cadastro de usuário */}
         <Route path="/register" element={<RegisterPage />} />
-        {/* Página de cadastro de medicamento */}
         <Route path="/add-medicine" element={<AddMedicine />} />{" "}
-        {/* Nova rota para adicionar medicamento */}
-        {/* Agrupando rotas protegidas no layout privado */}
         <Route element={<PrivateLayout />}>
           <Route
             path="/dashboard"

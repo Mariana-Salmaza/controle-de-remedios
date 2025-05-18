@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../api"; // Seu axios configurado
 
 const EditCategory = () => {
-  const { id } = useParams(); // Pega o id da categoria da URL
+  const { id } = useParams();
   const [category, setCategory] = useState({
     name: "",
   });
@@ -12,7 +12,6 @@ const EditCategory = () => {
 
   useEffect(() => {
     if (id) {
-      // Se estivermos editando, buscamos a categoria pelo ID
       const fetchCategory = async () => {
         const response = await api.get(`/categories/${id}`);
         setCategory(response.data);
@@ -33,15 +32,13 @@ const EditCategory = () => {
     e.preventDefault();
     try {
       if (id) {
-        // Se estivermos editando, fazemos um PUT
         await api.put(`/categories/${id}`, category);
         alert("Categoria atualizada com sucesso");
       } else {
-        // Se estivermos criando, fazemos um POST
         await api.post("/categories", category);
         alert("Categoria criada com sucesso");
       }
-      navigate("/categories"); // Redireciona para a listagem de categorias
+      navigate("/categories");
     } catch {
       alert("Erro ao salvar categoria");
     }

@@ -12,9 +12,8 @@ import {
   Paper,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../api"; // Supondo que você tenha configurado o axios com o baseURL
+import api from "../api";
 
-// Definir a interface para o medicamento
 interface Medicine {
   id: number;
   name: string;
@@ -25,11 +24,10 @@ interface Medicine {
 }
 
 const MedicinesByCategory = () => {
-  const { categoryId } = useParams(); // Pega o ID da categoria da URL
-  const [medicines, setMedicines] = useState<Medicine[]>([]); // Corrigido para usar o tipo 'Medicine' // Estado para armazenar os medicamentos da categoria
+  const { categoryId } = useParams();
+  const [medicines, setMedicines] = useState<Medicine[]>([]);
   const navigate = useNavigate();
 
-  // Função para buscar os medicamentos da categoria
   const fetchMedicines = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -44,16 +42,16 @@ const MedicinesByCategory = () => {
         },
       });
 
-      setMedicines(response.data.medicines); // Atualiza o estado com os medicamentos recebidos
+      setMedicines(response.data.medicines);
     } catch (error) {
       console.error("Erro ao buscar medicamentos:", error);
       alert("Erro ao buscar medicamentos.");
     }
-  }, [categoryId]); // 'categoryId' é a dependência
+  }, [categoryId]);
 
   useEffect(() => {
-    fetchMedicines(); // Chama a função ao montar o componente
-  }, [fetchMedicines]); // Adiciona 'fetchMedicines' nas dependências
+    fetchMedicines();
+  }, [fetchMedicines]);
 
   return (
     <Box sx={{ padding: 3 }}>
@@ -63,7 +61,7 @@ const MedicinesByCategory = () => {
       <Button
         variant="contained"
         color="primary"
-        onClick={() => navigate(`/add-medicine`)} // Redireciona para a página de cadastro de medicamento
+        onClick={() => navigate(`/add-medicine`)}
         sx={{ marginBottom: 3 }}
       >
         + Adicionar Medicamento
@@ -91,7 +89,7 @@ const MedicinesByCategory = () => {
                     <Button
                       variant="outlined"
                       sx={{ marginRight: 1 }}
-                      onClick={() => navigate(`/edit-medicine/${medicine.id}`)} // Redireciona para editar medicamento
+                      onClick={() => navigate(`/edit-medicine/${medicine.id}`)}
                     >
                       Editar
                     </Button>
@@ -111,7 +109,7 @@ const MedicinesByCategory = () => {
                           });
                           setMedicines(
                             medicines.filter((m) => m.id !== medicine.id)
-                          ); // Remove o medicamento da lista após exclusão
+                          );
                         } catch (error) {
                           console.error("Erro ao excluir medicamento:", error);
                           alert("Erro ao excluir medicamento.");
