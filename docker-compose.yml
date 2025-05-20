@@ -1,0 +1,48 @@
+services:
+  database:
+    image: mysql:8.0
+    container_name: msql-container
+    environment:
+      DB_NAME: controle_remedios
+      DB_USER: root
+      DB_PASSWORD: ""
+      DB_HOST: localhost
+      DB_PORT: 3306
+      JWT_SECRET: segredo_bem_secreto
+    ports:
+      - "3306"
+    networks:
+      - app-networks
+
+  backend:
+    build: ./Back
+    container_name: backend
+    ports:
+      - "3000"
+    depends_on:
+      - database
+    networks:
+      - app-networks
+
+  frontend:
+    build: ./Front
+    container_name: frontend
+    ports:
+      - "5173"
+    depends_on:
+      - backend
+    networks:
+      - app-networks
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    ports:
+      - "8080"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - app-networks
+
+networks:
+  app-networks:
