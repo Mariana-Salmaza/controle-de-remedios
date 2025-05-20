@@ -1,7 +1,7 @@
 import app from "./app";
 import sequelize from "./config/database";
 
-const port = 3001;
+const port = 3000;
 
 // sync database
 sequelize
