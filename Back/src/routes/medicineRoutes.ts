@@ -5,22 +5,17 @@ import {
   getMedicineById,
   updateMedicine,
   deleteMedicine,
-  getMedicinesByUserId,
   getMedicinesByCategory,
 } from "../controllers/medicineController";
 import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
-router.post("/medicines", authMiddleware, createMedicine);
-router.get("/medicines", authMiddleware, getAllMedicines);
-router.get("/medicines/:id", authMiddleware, getMedicineById);
-router.get(
-  "/medicines/category/:categoryId",
-  authMiddleware,
-  getMedicinesByCategory
-);
-router.put("/medicines/:id", authMiddleware, updateMedicine);
-router.delete("/medicines/:id", authMiddleware, deleteMedicine);
+router.post("/", authMiddleware, createMedicine);
+router.get("/", authMiddleware, getAllMedicines);
+router.get("/:id", authMiddleware, getMedicineById);
+router.get("/category/:categoryId", authMiddleware, getMedicinesByCategory);
+router.put("/:id", authMiddleware, updateMedicine);
+router.delete("/:id", authMiddleware, deleteMedicine);
 
 export default router;
