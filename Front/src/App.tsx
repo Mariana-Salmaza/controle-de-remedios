@@ -8,7 +8,7 @@ import EditMedicine from "./pages/EditMedicine";
 import EditCategory from "./pages/EditCategory";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PrivateLayout from "./components/PrivateLayout";
-import AddMedicine from "./pages/AddMedicine"; // Importe a página de adicionar medicamento
+import AddMedicine from "./pages/AddMedicine";
 import AddCategory from "./pages/AddCategory";
 import MedicinesByCategory from "./pages/MedicinesByCategory";
 import EditUser from "./pages/EditUser";

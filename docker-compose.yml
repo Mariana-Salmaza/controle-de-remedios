@@ -1,34 +1,46 @@
+version: "3.8"
+
 services:
-  database:
+  mysql:
     image: mysql:8.0
-    container_name: msql-container
+    container_name: mysql-container
     environment:
-      DB_NAME: controle_remedios
-      DB_USER: root
-      DB_PASSWORD: ""
-      DB_HOST: localhost
-      DB_PORT: 3306
-      JWT_SECRET: segredo_bem_secreto
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - "3306"
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
     networks:
       - app-networks
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
 
   backend:
     build: ./Back
     container_name: backend
+    env_file:
+      - ./Back/.env
     ports:
-      - "3000"
+      - "3000:3000"
     depends_on:
-      - database
+      mysql:
+        condition: service_healthy
+
     networks:
       - app-networks
+    restart: unless-stopped
 
   frontend:
     build: ./Front
     container_name: frontend
+    env_file:
+      - ./Front/.env
     ports:
-      - "5173"
+      - "5173:3000"
     depends_on:
       - backend
     networks:
@@ -38,11 +50,18 @@ services:
     image: nginx:latest
     container_name: nginx-proxy
     ports:
-      - "8080"
+      - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
     networks:
       - app-networks
 
+volumes:
+  db_data:
+
 networks:
   app-networks:
+    driver: bridge
