@@ -1,14 +1,9 @@
-<<<<<<< HEAD
 FROM node:22-slim AS build
 
 COPY src /app/src
 COPY package.json /app
 COPY tsconfig.json /app
 COPY vite.config.ts /app
-=======
-# Estágio de build
-FROM node:18-alpine as build
->>>>>>> 2c47f5e9aff7fbf0159bcf4d37907d11676b734d
 
 WORKDIR /app
 
