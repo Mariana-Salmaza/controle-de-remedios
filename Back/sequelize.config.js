@@ -3,13 +3,11 @@ require("dotenv").config();
 const isTest = process.env.NODE_ENV === "test";
 
 const databaseConfig = {
-  username: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "",
-  database: isTest
-    ? "controle_remedios_test"
-    : process.env.DB_NAME || "controle_remedios",
-  host: process.env.DB_HOST || "localhost",
-  port: Number(process.env.DB_PORT) || 3306,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: isTest ? process.env.DB_NAME_TEST : process.env.DB_NAME,
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
   dialect: "mysql",
   logging: !isTest,
 };
