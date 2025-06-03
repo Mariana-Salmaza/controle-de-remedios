@@ -2,7 +2,6 @@ import path from "path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -11,17 +10,17 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000, // Para corresponder com a porta mapeada no docker-compose
-    host: true, // Necessário para o contêiner Docker
+    port: 3000,
+    host: true,
     proxy: {
-      "/api": {
-        target: "http://backend:3000",
+      '/api': {
+        target: 'http://backend:3000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-      },
-    },
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
   },
   build: {
-    outDir: "dist",
+    outDir: 'dist',
   },
 });

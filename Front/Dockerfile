@@ -1,40 +1,25 @@
-FROM node:22-slim AS build
-
-COPY src /app/src
-COPY package.json /app
-COPY tsconfig.json /app
-COPY vite.config.ts /app
+FROM node:18-alpine as build
 
 WORKDIR /app
 
-# Copiar arquivos de configuração de pacotes
-COPY package*.json ./
+COPY package*.json ./ 
 
-# Instalar dependências
 RUN npm ci
 
-# Copiar o código-fonte
 COPY . .
+COPY public ./public
 
-# Definir a variável de ambiente para o build
-ENV VITE_API_URL=/api/
-
-# Buildar o aplicativo
 RUN npm run build
 
-# Estágio de produção - usar node para servir os arquivos estáticos
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Instalar um servidor leve para arquivos estáticos
 RUN npm install -g serve
 
-# Copiar o build do estágio anterior
 COPY --from=build /app/dist /app/dist
+COPY --from=build /app/public /app/public
 
-# Expor a porta 3000
 EXPOSE 3000
 
-# Comando para iniciar o servidor
 CMD ["serve", "-s", "dist", "-l", "3000"]
