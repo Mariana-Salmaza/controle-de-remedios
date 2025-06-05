@@ -1,6 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { TextField, Button, Box, Typography, Paper } from "@mui/material";
-import CustomGrid from "../components/CustomGrid"; // ajuste o caminho conforme a pasta
+import CustomGrid from "../components/CustomGrid";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 import loginImage from "../assets/login-image.webp.webp";

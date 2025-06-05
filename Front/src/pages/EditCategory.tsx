@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../api"; // Seu axios configurado
+import api from "../api";
 
 const EditCategory = () => {
   const { id } = useParams();
