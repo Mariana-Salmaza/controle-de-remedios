@@ -44,7 +44,6 @@ CategoryModel.init(
   }
 );
 
-// Associação opcional com usuário
 CategoryModel.belongsTo(UserModel, {
   foreignKey: "userId",
   as: "user",

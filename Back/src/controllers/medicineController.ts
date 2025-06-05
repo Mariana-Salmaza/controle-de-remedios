@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import Medicine from "../models/medicineModel";
 import UserModel from "../models/UserModel";
-import CategoryModel from "../models/categoryModel"; // Certifique-se de que o caminho está correto
+import CategoryModel from "../models/categoryModel";
 
-// Cria um novo medicamento
 export const createMedicine = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
@@ -32,12 +31,10 @@ export const createMedicine = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Categoria não encontrada" });
     }
 
-    // Validação adicional para categoryId
     if (categoryId && isNaN(Number(categoryId))) {
       return res.status(400).json({ error: "Categoria inválida" });
     }
 
-    // Verificando se o usuário existe
     const userExists = await UserModel.findByPk(userId);
     if (!userExists) {
       return res.status(400).json({
@@ -59,7 +56,6 @@ export const createMedicine = async (req: Request, res: Response) => {
   }
 };
 
-// Busca todos os medicamentos
 export const getAllMedicines = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
@@ -86,7 +82,6 @@ export const getAllMedicines = async (req: Request, res: Response) => {
   }
 };
 
-// Busca um medicamento pelo ID
 export const getMedicineById = async (
   req: Request<{ id: string }>,
   res: Response
@@ -104,7 +99,6 @@ export const getMedicineById = async (
   }
 };
 
-// Busca todos os medicamentos de um usuário
 export const getMedicinesByUserId = async (
   req: Request<{ userId: string }>,
   res: Response
@@ -112,13 +106,11 @@ export const getMedicinesByUserId = async (
   try {
     const { userId } = req.params;
 
-    // Verifica se o usuário existe
     const user = await UserModel.findByPk(userId);
     if (!user) {
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
-    // Busca medicamentos associados ao usuário
     const medicines = await Medicine.findAll({
       where: { userId },
     });
@@ -131,7 +123,6 @@ export const getMedicinesByUserId = async (
   }
 };
 
-// Atualiza um medicamento
 export const updateMedicine = async (
   req: Request<{ id: string }>,
   res: Response
@@ -144,7 +135,6 @@ export const updateMedicine = async (
       return res.status(404).json({ error: "Medicamento não encontrado" });
     }
 
-    // Garante que o medicamento pertence ao usuário logado
     if (medicine.userId !== userId) {
       return res.status(403).json({ error: "Acesso negado." });
     }
@@ -178,12 +168,10 @@ export const updateMedicine = async (
   }
 };
 
-// Busca os medicamentos de uma categoria específica
 export const getMedicinesByCategory = async (req: Request, res: Response) => {
   try {
-    const { categoryId } = req.params; // Obtém o ID da categoria da URL
+    const { categoryId } = req.params;
 
-    // Busca medicamentos associados à categoria
     const medicines = await Medicine.findAll({
       where: { categoryId },
       include: [
@@ -206,7 +194,6 @@ export const getMedicinesByCategory = async (req: Request, res: Response) => {
   }
 };
 
-// Exclui um medicamento
 export const deleteMedicine = async (
   req: Request<{ id: string }>,
   res: Response
@@ -219,7 +206,6 @@ export const deleteMedicine = async (
       return res.status(404).json({ error: "Medicamento não encontrado" });
     }
 
-    // Garante que o medicamento pertence ao usuário logado
     if (medicine.userId !== userId) {
       return res.status(403).json({ error: "Acesso negado." });
     }

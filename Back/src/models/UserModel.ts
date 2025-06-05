@@ -2,7 +2,6 @@ import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
 import bcrypt from "bcrypt";
 
-// Define os atributos do UserModel
 interface UserAttributes {
   id: number | undefined;
   name: string | undefined;
@@ -11,7 +10,6 @@ interface UserAttributes {
   password: string | undefined;
 }
 
-// Define a classe UserModel
 class UserModel extends Model<UserAttributes> implements UserAttributes {
   public id: number | undefined;
   public name: string | undefined;
@@ -19,18 +17,15 @@ class UserModel extends Model<UserAttributes> implements UserAttributes {
   public document: string | undefined;
   public password: string | undefined;
 
-  // Método para criptografar a senha
   public async hashPassword() {
     this.password = await bcrypt.hash(this.password!, 10);
   }
 
-  // Método para validar a senha
   public async validatePassword(password: string): Promise<boolean> {
     return await bcrypt.compare(password, this.password!);
   }
 }
 
-// Inicialização do modelo
 UserModel.init(
   {
     id: {

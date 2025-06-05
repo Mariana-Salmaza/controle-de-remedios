@@ -6,7 +6,6 @@ import {
   validatePasswordStrength,
 } from "../validators/userValidator";
 
-// método que busca todos
 export const getAll = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
@@ -34,19 +33,18 @@ export const getUserById = async (
   res: Response
 ) => {
   try {
-    const user = await UserModel.findByPk(req.params.id); // Busca o usuário pelo ID
+    const user = await UserModel.findByPk(req.params.id); 
 
     if (!user) {
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
-    return res.json(user); // Retorna os dados do usuário
+    return res.json(user);
   } catch (error) {
     return res.status(500).json({ error: "Algo deu errado!" });
   }
 };
 
-//método que cria um novo usuário
 export const createUser = async (req: Request, res: Response) => {
   try {
     const { name, email, document, password } = req.body;
@@ -71,7 +69,6 @@ export const createUser = async (req: Request, res: Response) => {
         .json({ error: "A senha deve ter no mínimo 6 caracteres" });
     }
 
-    // Verifica se o e-mail já está cadastrado
     const emailExists = await UserModel.findOne({ where: { email } });
     if (emailExists) {
       return res.status(400).json({ error: "E-mail já está em uso" });
@@ -84,14 +81,13 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-// método que atualiza usuário
 export const updateUser = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
   try {
     const { name, document, password, email } = req.body;
-    const userIdFromToken = (req as any).user?.id; // Obtém o ID do usuário logado do token
+    const userIdFromToken = (req as any).user?.id;
 
     if (!name || !document || !password) {
       return res
@@ -99,12 +95,10 @@ export const updateUser = async (
         .json({ error: "Nome, documento e senha são obrigatórios." });
     }
 
-    // Valida o CPF
     if (!validateCPF(document)) {
       return res.status(400).json({ error: "CPF inválido." });
     }
 
-    // Valida a senha
     if (!validatePasswordStrength(password)) {
       return res
         .status(400)
@@ -116,21 +110,18 @@ export const updateUser = async (
       return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
-    // Verifica se o usuário logado é o mesmo que está tentando atualizar
     if (user.id !== userIdFromToken) {
       return res
         .status(403)
         .json({ error: "Você só pode atualizar suas próprias informações." });
     }
 
-    // Impede alteração do email
     if (email && email !== user.email) {
       return res
         .status(400)
         .json({ error: "Não é permitido alterar o e-mail." });
     }
 
-    // Atualiza os campos permitidos
     user.name = name;
     user.document = document;
     user.password = password;
@@ -143,7 +134,6 @@ export const updateUser = async (
   }
 };
 
-// método que exclui o usuário
 export const deleteUser = async (
   req: Request<{ id: string }>,
   res: Response
@@ -157,7 +147,6 @@ export const deleteUser = async (
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
-    // Só permite exclusão do próprio usuário
     if (user.id !== userIdFromToken) {
       return res
         .status(403)

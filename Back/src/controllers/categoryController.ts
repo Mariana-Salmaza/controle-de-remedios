@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import CategoryModel from "../models/categoryModel";
 import UserModel from "../models/UserModel";
 
-// Cria uma nova categoria
 export const createCategory = async (req: Request, res: Response) => {
   try {
     const { name } = req.body;
@@ -21,7 +20,6 @@ export const createCategory = async (req: Request, res: Response) => {
   }
 };
 
-// Busca todas as categorias
 export const getAllCategories = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
@@ -46,7 +44,6 @@ export const getAllCategories = async (req: Request, res: Response) => {
   }
 };
 
-// Busca uma categoria pelo ID
 export const getCategoryById = async (
   req: Request<{ id: string }>,
   res: Response
@@ -64,7 +61,6 @@ export const getCategoryById = async (
   }
 };
 
-// Atualiza uma categoria
 export const updateCategory = async (
   req: Request<{ id: string }>,
   res: Response
@@ -92,7 +88,6 @@ export const updateCategory = async (
   }
 };
 
-// Exclui uma categoria
 export const deleteCategory = async (
   req: Request<{ id: string }>,
   res: Response

@@ -3,7 +3,6 @@ import sequelize from "../config/database";
 import CategoryModel from "./categoryModel";
 import UserModel from "./UserModel";
 
-// Define os atributos do MedicineModel
 interface MedicineAttributes {
   id: number | undefined;
   name: string | undefined;
@@ -14,7 +13,6 @@ interface MedicineAttributes {
   userId: number | undefined;
 }
 
-// Define a classe MedicineModel
 class MedicineModel
   extends Model<MedicineAttributes>
   implements MedicineAttributes
@@ -28,7 +26,6 @@ class MedicineModel
   public userId: number | undefined;
 }
 
-// Inicialização do modelo
 MedicineModel.init(
   {
     id: {
