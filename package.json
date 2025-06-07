@@ -1,0 +1,12 @@
+{
+  "name": "controle-de-remedios-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "end-2-end": "playwright test"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}
