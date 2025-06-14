@@ -9,10 +9,11 @@ export default defineConfig({
   workers: 1,
   reporter: "html",
   use: {
-    baseURL: "http://localhost",
+    baseURL: "https://mariro.local",
     headless: false,
     viewport: { width: 1280, height: 720 },
     trace: "on-first-retry",
+    ignoreHTTPSErrors: true,
   },
   projects: [
     {

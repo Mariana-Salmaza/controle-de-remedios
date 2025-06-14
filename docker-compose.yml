@@ -1,14 +1,13 @@
-
-version: '3.8'
+version: "3.8"
 
 services:
   mysql:
     image: mysql:8.0
     container_name: mysql-container
-    env_file:
-      - ./.env
     ports:
       - "3306:3306"
+    env_file:
+      - ./.env
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -19,13 +18,18 @@ services:
     container_name: backend
     env_file:
       - ./Back/.env
-    depends_on: 
+    depends_on:
       - mysql
     networks:
       - app-networks
+    expose:
+      - "3000" # exposto apenas para a rede interna (Nginx)
 
   frontend:
-    build: ./Front
+    build:
+      context: ./Front
+      args:
+        VITE_API_URL: https://mariro.local/api
     container_name: frontend
     env_file:
       - ./Front/.env
@@ -33,14 +37,20 @@ services:
       - backend
     networks:
       - app-networks
+    expose:
+      - "3000"
 
   nginx:
     image: nginx:latest
     container_name: nginx-proxy
+    restart: always
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./cert.pem:/etc/nginx/cert.pem
+      - ./chave.pem:/etc/nginx/chave.pem
     depends_on:
       - frontend
       - backend
