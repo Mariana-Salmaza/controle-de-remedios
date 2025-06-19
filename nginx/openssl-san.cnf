@@ -10,10 +10,10 @@ C  = BR
 ST = Parana
 L  = Campo Mourao
 O  = Grupo Integrado
-CN = mariro.local
+CN = todo.local
 
 [ v3_req ]
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = mariro.local
+DNS.1 = todo.local
