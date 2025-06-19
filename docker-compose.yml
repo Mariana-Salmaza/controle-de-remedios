@@ -28,7 +28,7 @@ services:
     build:
       context: ./Front
       args:
-        VITE_API_URL: https://todo.local/api/
+        VITE_API_URL: ${BACKEND_URI}
     container_name: frontend
     restart: always
     env_file:
