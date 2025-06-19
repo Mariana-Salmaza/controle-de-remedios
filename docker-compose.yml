@@ -4,8 +4,6 @@ services:
   mysql:
     image: mysql:8.0
     container_name: mysql-container
-    ports:
-      - "3306:3306"
     env_file:
       - ./.env
     volumes:
@@ -16,6 +14,7 @@ services:
   backend:
     build: ./Back
     container_name: backend
+    restart: always
     env_file:
       - ./Back/.env
     depends_on:
@@ -29,8 +28,9 @@ services:
     build:
       context: ./Front
       args:
-        VITE_API_URL: https://mariro.local/api
+        VITE_API_URL: https://todo.local/api/
     container_name: frontend
+    restart: always
     env_file:
       - ./Front/.env
     depends_on:
@@ -41,16 +41,12 @@ services:
       - "3000"
 
   nginx:
-    image: nginx:latest
-    container_name: nginx-proxy
+    build: ./nginx
+    container_name: nginx
     restart: always
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./cert.pem:/etc/nginx/cert.pem
-      - ./chave.pem:/etc/nginx/chave.pem
     depends_on:
       - frontend
       - backend
