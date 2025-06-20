@@ -140,8 +140,10 @@ const AddMedicine = () => {
           required
         />
         <FormControl fullWidth margin="normal" required>
-          <InputLabel>Categoria</InputLabel>
+          <InputLabel id="categoria-label">Categoria</InputLabel>
           <Select
+            labelId="categoria-label"
+            id="categoria"
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
             label="Categoria"
