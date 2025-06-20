@@ -1,2 +1,17 @@
+# Arquivos de ambiente e dependências
 .env
 node_modules/
+
+# Certificados locais (SSL)
+cert.pem
+chave.pem
+
+# Resultados de testes Playwright
+test-results/
+
+# Relatórios HTML gerados pelos testes (caso você gere)
+playwright-report/
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
