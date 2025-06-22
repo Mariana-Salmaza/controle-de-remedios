@@ -4,7 +4,8 @@ Front/.env
 node_modules/
 Back/node_modules/
 Front/node_modules/
-cert.pem
+nginx/cert.pem
+nginx/chave.pem
 chave.pem
 *.pem
 *.key
