@@ -7,7 +7,7 @@ test.describe("Fluxo completo de Categoria + Medicamento", () => {
     // Login
     await page.goto("/login");
     await page.getByLabel("E-mail").fill("usuario33286@teste.com");
-    await page.getByLabel("Senha").fill("Senha@123");
+    await page.getByLabel("Senha").fill("senha@123");
     await page.getByRole("button", { name: "Entrar" }).click();
     await expect(page).toHaveURL(/.*dashboard/);
 

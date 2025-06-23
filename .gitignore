@@ -1,17 +1,20 @@
 # Arquivos de ambiente e dependências
 .env
+Back/.env
+Front/.env
 node_modules/
-
-# Certificados locais (SSL)
-cert.pem
+Back/node_modules/
+Front/node_modules/
+nginx/cert.pem
+nginx/chave.pem
 chave.pem
-
-# Resultados de testes Playwright
+*.pem
+*.key
+Front/build/
+Back/dist/
+.playwright/
 test-results/
-
-# Relatórios HTML gerados pelos testes (caso você gere)
-playwright-report/
-
-# Arquivos de sistema
+coverage/
+*.log
 .DS_Store
 Thumbs.db

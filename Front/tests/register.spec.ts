@@ -11,7 +11,7 @@ test.describe("Fluxo de Cadastro e Login", () => {
 
     await page.getByLabel("Nome").fill("Rodrigo Teste");
     await page.getByLabel("E-mail").fill(email);
-    await page.getByLabel("CPF").fill("12345678900");
+    await page.getByLabel("CPF").fill("39053344705");
     await page.locator('[name="password"]').fill("Senha@123");
     await page.locator('[name="confirmPassword"]').fill("Senha@123");
 

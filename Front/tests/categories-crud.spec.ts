@@ -5,7 +5,7 @@ test.describe("CRUD completo de categorias com usuário fixo", () => {
     // Login com usuário existente
     await page.goto("/login");
     await page.getByLabel("E-mail").fill("usuario33294@teste.com");
-    await page.getByLabel("Senha").fill("Senha@123");
+    await page.getByLabel("Senha").fill("senha@123");
     await page.getByRole("button", { name: "Entrar" }).click();
     await expect(page).toHaveURL(/.*dashboard/);
 
